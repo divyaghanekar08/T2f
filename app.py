@@ -12,9 +12,6 @@ from transformers import CLIPProcessor, CLIPModel
 from diffusers import StableDiffusionPipeline
 from collections import defaultdict
 import warnings
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 warnings.filterwarnings('ignore')
 
