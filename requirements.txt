@@ -1,16 +1,12 @@
-# requirements.txt
+torch>=2.0.0
+torchvision>=0.15.0
 diffusers==0.31.0
 transformers==4.46.2
 accelerate==0.33.0
 streamlit
-torch
-torchvision
-numpy
 pillow
-matplotlib
-seaborn
-pandas
+numpy
 opencv-python
-mediapipe
-deepface
-plotly
+matplotlib
+pandas
+seaborn
