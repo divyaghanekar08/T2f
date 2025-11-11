@@ -226,48 +226,54 @@ class AdvancedTextToFaceGenerator:
         return scores
 
     # ------------------------------------------------
-    def detect_faces(self, image):
-        """Detect faces and analyze composition"""
+    # In your AdvancedTextToFaceGenerator class, replace the mediapipe part:
 
-        img_array = np.array(image)
+def detect_faces(self, image):
+    """Detect faces using OpenCV only (no mediapipe)"""
+    img_array = np.array(image)
+    
+    # Convert to grayscale for face detection
+    if len(img_array.shape) == 3:
         gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
-
-        faces = self.face_cascade.detectMultiScale(
-            gray,
-            scaleFactor=1.1,
-            minNeighbors=5,
-            minSize=(30, 30)
-        )
-
-        analysis = {
-            'num_faces': len(faces),
-            'face_detected': len(faces) > 0,
-            'face_size_ratio': 0.0,
-            'face_centered': False
-        }
-
-        if len(faces) > 0:
-            # Get largest face
-            largest_face = max(faces, key=lambda x: x[2] * x[3])
-            x, y, w, h = largest_face
-
-            # Calculate face size ratio
-            img_area = img_array.shape[0] * img_array.shape[1]
-            face_area = w * h
-            analysis['face_size_ratio'] = face_area / img_area
-
-            # Check if centered (within middle 60% of image)
-            center_x = x + w/2
-            center_y = y + h/2
-            img_center_x = img_array.shape[1] / 2
-            img_center_y = img_array.shape[0] / 2
-
-            distance = np.sqrt((center_x - img_center_x)**2 + (center_y - img_center_y)**2)
-            threshold = img_array.shape[1] * 0.2  # 20% of image width
-            analysis['face_centered'] = distance < threshold
-
-        return analysis
-
+    else:
+        gray = img_array
+    
+    # Use OpenCV's built-in face detector
+    faces = self.face_cascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30)
+    )
+    
+    analysis = {
+        'num_faces': len(faces),
+        'face_detected': len(faces) > 0,
+        'face_size_ratio': 0.0,
+        'face_centered': False
+    }
+    
+    if len(faces) > 0:
+        # Get largest face
+        largest_face = max(faces, key=lambda x: x[2] * x[3])
+        x, y, w, h = largest_face
+        
+        # Calculate face size ratio
+        img_area = img_array.shape[0] * img_array.shape[1]
+        face_area = w * h
+        analysis['face_size_ratio'] = face_area / img_area
+        
+        # Check if centered
+        center_x = x + w/2
+        center_y = y + h/2
+        img_center_x = img_array.shape[1] / 2
+        img_center_y = img_array.shape[0] / 2
+        
+        distance = np.sqrt((center_x - img_center_x)**2 + (center_y - img_center_y)**2)
+        threshold = img_array.shape[1] * 0.2
+        analysis['face_centered'] = distance < threshold
+    
+    return analysis
     # ------------------------------------------------
     def evaluate_face_quality(self, image):
         """Comprehensive quality metrics"""
@@ -631,4 +637,5 @@ def main():
     )
 
 if __name__ == "__main__":
+
     main()
